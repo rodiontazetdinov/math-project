@@ -3,9 +3,13 @@ import './App.css';
 import {useEffect, useState} from 'react';
 import { Route, Routes } from 'react-router-dom';
 
+import { handleTime } from './utils/functions';
+
 function App() {
 
   const [counter, setCounter] = useState(0);
+  const [startTime, setStartTime] = useState(0);
+  const [finishTime, setFinishTime] = useState(0);
 
   const [isStarted, setIsStarted] = useState(false);
   
@@ -18,18 +22,6 @@ function App() {
     notCorrect: 0
   });
   const [inputData, setInputData] = useState('');
-
-// useEffect(()=> {
-//   for (let i=0; i < 5; i++) {
-//     getQuestion();
-//     console.log(questions);
-//     console.log(i)
-//   }
-//   // for (let i=0; i < 5; i++) {
-//   //   question(i);
-//   // }
-//   console.log('times');
-// }, []);
 
 
 function getQuestion () {
@@ -47,30 +39,22 @@ function handleSubmit (e) {
   setCounter(counter + 1);
 
   setInputData('');
-  console.log(answers);
   setQuestion(getQuestion());
   counter == 99? setIsFinished(!isFinished) : setIsFinished(isFinished);
+  counter == 99?  setFinishTime(handleTime(startTime)): setIsFinished(isFinished);
   
   
 }
+
 
 function handleChange (e) {
   setInputData(e.target.value)
 }
 
-// function askQuestion (i) {
-//     const answer = prompt(`сколько будет ${questions[i][0]}`, '');
-//     if (questions[i][1] == answer) {
-//         setResult({ ...result, correct: result.correct + 1 });
-//     } else {
-//         setResult({ ...result, notCorrect: result.notCorrect + 1 });
-//         setAnswers(...answers, [questions[i], answer]);
-//     }
-// }
-
 function handleStartButton () {
   setQuestion(getQuestion());
   setIsStarted(!isStarted);
+  setStartTime(performance.now());
 }
   return (
     <div className="App">
@@ -94,6 +78,9 @@ function handleStartButton () {
           </form>
           :
           <ul className='exercise__result'>
+            <li className='exercise__result-item'>
+              Время: {`${finishTime} минут`}
+            </li>
             <li className='exercise__result-item'>
               Правильно: {result.correct}
             </li>
