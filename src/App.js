@@ -5,6 +5,13 @@ import { Route, Routes } from 'react-router-dom';
 
 import { handleTime } from './utils/functions';
 
+//добавить:
+//начальный экран с выбором кол-ва примеров
+//убрать умножение на 0, 1, 10, 100
+//добавить обзор ошибок
+//добавить коэфицент внимательности (разница между правильным ответом и неправильным)
+//добавить коэфицент сосредоточенности (среднее время решения одного примера)
+
 function App() {
 
   const [counter, setCounter] = useState(0);
@@ -40,10 +47,9 @@ function handleSubmit (e) {
 
   setInputData('');
   setQuestion(getQuestion());
+  //добавить возможность регулировать кол-во примеров
   counter == 99? setIsFinished(!isFinished) : setIsFinished(isFinished);
   counter == 99?  setFinishTime(handleTime(startTime)): setIsFinished(isFinished);
-  
-  
 }
 
 
