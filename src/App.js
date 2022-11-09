@@ -18,15 +18,22 @@ function App() {
   const [startTime, setStartTime] = useState(0);
   const [finishTime, setFinishTime] = useState(0);
 
+  const [concentrationTime, setConcetrationtime] = useState(0);
+  const [attention, setAttention] = useState('');
+
   const [isStarted, setIsStarted] = useState(false);
   
   const [isFinished, setIsFinished] = useState(false);
+  const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState([]);
   const [question, setQuestion] = useState('');
+  const [questionsCount, setQuestionsCount] = useState(49);
  
   const [result, setResult] = useState({
     correct: 0,
-    notCorrect: 0
+    notCorrect: 0,
+    concentrationTime: 0,
+    attention: ''
   });
   const [inputData, setInputData] = useState('');
 
@@ -35,21 +42,40 @@ function getQuestion () {
     const a = Math.round(Math.random() * 100);
     const b = Math.round(Math.random() * 100);
     const c = a * b;
-    setAnswers([...answers, +c])
-    return `${a} * ${b} = ?`;// `${c}`;
+    setQuestions([...questions, +c])
+    return `${a} * ${b} = ?`;
 }
 
 function handleSubmit (e) {
   e.preventDefault();
-  setAnswers([...answers, inputData]);
-  answers[counter] == inputData? setResult({...result, correct: result.correct + 1}) : setResult({...result, notCorrect: result.notCorrect + 1});
+  // setQuestions([...questions, inputData]);
+  setAnswers([...answers, +inputData]);
+  questions[counter] == inputData? setResult({...result, correct: result.correct + 1}) : setResult({...result, notCorrect: result.notCorrect + 1});
   setCounter(counter + 1);
 
   setInputData('');
   setQuestion(getQuestion());
   //добавить возможность регулировать кол-во примеров
-  counter == 99? setIsFinished(!isFinished) : setIsFinished(isFinished);
-  counter == 99?  setFinishTime(handleTime(startTime)): setIsFinished(isFinished);
+  handleFinish(counter, questionsCount, isFinished, startTime);
+  console.log(questions);
+  console.log(answers);
+}
+
+function handleAttention (counter, questionsCount) {
+  if (counter == questionsCount) {
+    let questionsSum = questions.reduce((previuousAnswer, nextAnswer) => previuousAnswer + nextAnswer, 0);
+    let answersSum = answers.reduce((previuousAnswer, nextAnswer) => previuousAnswer + nextAnswer, 0);
+    console.log(questionsSum);
+    console.log(answersSum);
+    setResult({...result, attention: `${answersSum / questionsSum * 100}%`});
+    console.log(answersSum);
+  }
+}
+
+function handleFinish (counter, questionsCount, isFinished, startTime) {
+  counter == questionsCount? setIsFinished(!isFinished) : setIsFinished(isFinished);
+  counter == questionsCount?  setFinishTime(handleTime(startTime)) : setIsFinished(isFinished);
+  handleAttention();
 }
 
 
@@ -92,6 +118,12 @@ function handleStartButton () {
             </li>
             <li className='exercise__result-item'>
               Не правильно: {result.notCorrect}
+            </li>
+            <li className='exercise__result-item'>
+              Концентрация: {result.concentrationTime}
+            </li>
+            <li className='exercise__result-item'>
+              Внимательность: {result.attention}
             </li>
           </ul>
         :
