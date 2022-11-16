@@ -27,7 +27,8 @@ function App() {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState([]);
   const [question, setQuestion] = useState('');
-  const [questionsCount, setQuestionsCount] = useState(49);
+  //исправить на 49
+  const [questionsCount, setQuestionsCount] = useState(2);
  
   const [result, setResult] = useState({
     correct: 0,
@@ -50,15 +51,19 @@ function handleSubmit (e) {
   e.preventDefault();
   // setQuestions([...questions, inputData]);
   setAnswers([...answers, +inputData]);
-  questions[counter] == inputData? setResult({...result, correct: result.correct + 1}) : setResult({...result, notCorrect: result.notCorrect + 1});
+  console.log(questions[counter], inputData);
+  // questions[counter] == inputData? console.log('da') : console.log('net');
+  questions[counter] == inputData? setResult((result) => ({...result, correct: result.correct + 1})) : setResult((result) => ({...result, notCorrect: result.notCorrect + 1}));
+  console.log(result);
   setCounter(counter + 1);
 
   setInputData('');
   setQuestion(getQuestion());
   //добавить возможность регулировать кол-во примеров
   handleFinish(counter, questionsCount, isFinished, startTime);
-  console.log(questions);
-  console.log(answers);
+  // console.log(questions);
+  // console.log(answers, 'answers');
+  // console.log(result);
 }
 
 function handleAttention (counter, questionsCount) {
@@ -67,7 +72,7 @@ function handleAttention (counter, questionsCount) {
     let answersSum = answers.reduce((previuousAnswer, nextAnswer) => previuousAnswer + nextAnswer, 0);
     console.log(questionsSum);
     console.log(answersSum);
-    setResult({...result, attention: `${answersSum / questionsSum * 100}%`});
+    setResult((result) => ({...result, attention: `${answersSum / questionsSum * 100}%`}));
     console.log(answersSum);
   }
 }
