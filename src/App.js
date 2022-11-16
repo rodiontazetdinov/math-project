@@ -49,21 +49,13 @@ function getQuestion () {
 
 function handleSubmit (e) {
   e.preventDefault();
-  // setQuestions([...questions, inputData]);
   setAnswers([...answers, +inputData]);
-  console.log(questions[counter], inputData);
-  // questions[counter] == inputData? console.log('da') : console.log('net');
   questions[counter] == inputData? setResult((result) => ({...result, correct: result.correct + 1})) : setResult((result) => ({...result, notCorrect: result.notCorrect + 1}));
-  console.log(result);
   setCounter(counter + 1);
-
   setInputData('');
   setQuestion(getQuestion());
   //добавить возможность регулировать кол-во примеров
   handleFinish(counter, questionsCount, isFinished, startTime);
-  // console.log(questions);
-  // console.log(answers, 'answers');
-  // console.log(result);
 }
 
 function handleAttention (counter, questionsCount) {
