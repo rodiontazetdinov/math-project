@@ -12,6 +12,8 @@ import { handleTime } from './utils/functions';
 //добавить коэфицент внимательности (разница между правильным ответом и неправильным)
 //добавить коэфицент сосредоточенности (среднее время решения одного примера)
 
+//исправить то, что в result записывается неполный answers, так как он не успевает записаться, из-за асинхронной истории с useState
+
 function App() {
 
   const [counter, setCounter] = useState(0);
@@ -28,7 +30,7 @@ function App() {
   const [answers, setAnswers] = useState([]);
   const [question, setQuestion] = useState('');
   //исправить на 49
-  const [questionsCount, setQuestionsCount] = useState(2);
+  const [questionsCount, setQuestionsCount] = useState(49);
  
   const [result, setResult] = useState({
     correct: 0,
@@ -53,12 +55,16 @@ function handleSubmit (e) {
   questions[counter] == inputData? setResult((result) => ({...result, correct: result.correct + 1})) : setResult((result) => ({...result, notCorrect: result.notCorrect + 1}));
   setCounter(counter + 1);
   setInputData('');
-  setQuestion(getQuestion());
+  counter == questionsCount ? setQuestion('done') : setQuestion(getQuestion());
   //добавить возможность регулировать кол-во примеров
   handleFinish(counter, questionsCount, isFinished, startTime);
+  console.log(questions);
+  console.log(answers);
 }
 
 function handleAttention (counter, questionsCount) {
+  // console.log(counter);
+  // console.log(questionsCount);
   if (counter == questionsCount) {
     let questionsSum = questions.reduce((previuousAnswer, nextAnswer) => previuousAnswer + nextAnswer, 0);
     let answersSum = answers.reduce((previuousAnswer, nextAnswer) => previuousAnswer + nextAnswer, 0);
@@ -66,14 +72,19 @@ function handleAttention (counter, questionsCount) {
     console.log(answersSum);
     setResult((result) => ({...result, attention: `${answersSum / questionsSum * 100}%`}));
     console.log(answersSum);
+    console.log('counter == questionQount');
   }
 }
 
 function handleFinish (counter, questionsCount, isFinished, startTime) {
   counter == questionsCount? setIsFinished(!isFinished) : setIsFinished(isFinished);
   counter == questionsCount?  setFinishTime(handleTime(startTime)) : setIsFinished(isFinished);
-  handleAttention();
+  // handleAttention(counter, questionsCount);
 }
+
+useEffect(() => {
+  handleAttention(counter, questionsCount);
+}, [answers])
 
 
 function handleChange (e) {
