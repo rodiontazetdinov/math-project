@@ -30,7 +30,7 @@ function App() {
   const [answers, setAnswers] = useState([]);
   const [question, setQuestion] = useState('');
   //исправить на 49
-  const [questionsCount, setQuestionsCount] = useState(2);
+  const [questionsCount, setQuestionsCount] = useState(24);
  
   const [result, setResult] = useState({
     correct: 0,
