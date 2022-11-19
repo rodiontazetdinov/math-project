@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/math-project/static/css/main.43810379.css",
-    "main.js": "/math-project/static/js/main.a74b93eb.js",
+    "main.js": "/math-project/static/js/main.ddf6c587.js",
     "index.html": "/math-project/index.html",
     "main.43810379.css.map": "/math-project/static/css/main.43810379.css.map",
-    "main.a74b93eb.js.map": "/math-project/static/js/main.a74b93eb.js.map"
+    "main.ddf6c587.js.map": "/math-project/static/js/main.ddf6c587.js.map"
   },
   "entrypoints": [
     "static/css/main.43810379.css",
-    "static/js/main.a74b93eb.js"
+    "static/js/main.ddf6c587.js"
   ]
 }
