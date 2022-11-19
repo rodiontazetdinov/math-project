@@ -30,7 +30,7 @@ function App() {
   const [answers, setAnswers] = useState([]);
   const [question, setQuestion] = useState('');
   //исправить на 49
-  const [questionsCount, setQuestionsCount] = useState(49);
+  const [questionsCount, setQuestionsCount] = useState(2);
  
   const [result, setResult] = useState({
     correct: 0,
@@ -63,14 +63,12 @@ function handleSubmit (e) {
 }
 
 function handleAttention (counter, questionsCount) {
-  // console.log(counter);
-  // console.log(questionsCount);
-  if (counter == questionsCount) {
+  if (counter == questionsCount + 1) {
     let questionsSum = questions.reduce((previuousAnswer, nextAnswer) => previuousAnswer + nextAnswer, 0);
     let answersSum = answers.reduce((previuousAnswer, nextAnswer) => previuousAnswer + nextAnswer, 0);
     console.log(questionsSum);
     console.log(answersSum);
-    setResult((result) => ({...result, attention: `${answersSum / questionsSum * 100}%`}));
+    answersSum < questionsSum ? setResult((result) => ({...result, attention: `${answersSum / questionsSum * 100}%`})) : setResult((result) => ({...result, attention: `${questionsSum / answersSum * 100}%`}));
     console.log(answersSum);
     console.log('counter == questionQount');
   }
@@ -79,13 +77,11 @@ function handleAttention (counter, questionsCount) {
 function handleFinish (counter, questionsCount, isFinished, startTime) {
   counter == questionsCount? setIsFinished(!isFinished) : setIsFinished(isFinished);
   counter == questionsCount?  setFinishTime(handleTime(startTime)) : setIsFinished(isFinished);
-  // handleAttention(counter, questionsCount);
 }
 
 useEffect(() => {
   handleAttention(counter, questionsCount);
 }, [answers])
-
 
 function handleChange (e) {
   setInputData(e.target.value)
@@ -112,7 +108,7 @@ function handleStartButton () {
           <form className='exercise' onSubmit={handleSubmit}>
             <label className='exercise__label'>
               {question}
-              <input className='exercise__input' type="text" name="name" onChange={handleChange} value={inputData}/>
+              <input className='exercise__input' type="number" maxLength="5" name="name" onChange={handleChange} value={inputData}/>
             </label>
             <input className='exercise__input exercise__input_type_submit' type="submit" value="Ответить" />
           </form>
