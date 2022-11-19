@@ -12,21 +12,31 @@ import { handleTime } from './utils/functions';
 //добавить коэфицент внимательности (разница между правильным ответом и неправильным)
 //добавить коэфицент сосредоточенности (среднее время решения одного примера)
 
+//исправить то, что в result записывается неполный answers, так как он не успевает записаться, из-за асинхронной истории с useState
+
 function App() {
 
   const [counter, setCounter] = useState(0);
   const [startTime, setStartTime] = useState(0);
   const [finishTime, setFinishTime] = useState(0);
 
+  const [concentrationTime, setConcetrationtime] = useState(0);
+  const [attention, setAttention] = useState('');
+
   const [isStarted, setIsStarted] = useState(false);
   
   const [isFinished, setIsFinished] = useState(false);
+  const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState([]);
   const [question, setQuestion] = useState('');
+  //исправить на 49
+  const [questionsCount, setQuestionsCount] = useState(2);
  
   const [result, setResult] = useState({
     correct: 0,
-    notCorrect: 0
+    notCorrect: 0,
+    concentrationTime: 0,
+    attention: ''
   });
   const [inputData, setInputData] = useState('');
 
@@ -35,23 +45,43 @@ function getQuestion () {
     const a = Math.round(Math.random() * 100);
     const b = Math.round(Math.random() * 100);
     const c = a * b;
-    setAnswers([...answers, +c])
-    return `${a} * ${b} = ?`;// `${c}`;
+    setQuestions([...questions, +c])
+    return `${a} * ${b} = ?`;
 }
 
 function handleSubmit (e) {
   e.preventDefault();
-  setAnswers([...answers, inputData]);
-  answers[counter] == inputData? setResult({...result, correct: result.correct + 1}) : setResult({...result, notCorrect: result.notCorrect + 1});
+  setAnswers([...answers, +inputData]);
+  questions[counter] == inputData? setResult((result) => ({...result, correct: result.correct + 1})) : setResult((result) => ({...result, notCorrect: result.notCorrect + 1}));
   setCounter(counter + 1);
-
   setInputData('');
-  setQuestion(getQuestion());
+  counter == questionsCount ? setQuestion('done') : setQuestion(getQuestion());
   //добавить возможность регулировать кол-во примеров
-  counter == 99? setIsFinished(!isFinished) : setIsFinished(isFinished);
-  counter == 99?  setFinishTime(handleTime(startTime)): setIsFinished(isFinished);
+  handleFinish(counter, questionsCount, isFinished, startTime);
+  console.log(questions);
+  console.log(answers);
 }
 
+function handleAttention (counter, questionsCount) {
+  if (counter == questionsCount + 1) {
+    let questionsSum = questions.reduce((previuousAnswer, nextAnswer) => previuousAnswer + nextAnswer, 0);
+    let answersSum = answers.reduce((previuousAnswer, nextAnswer) => previuousAnswer + nextAnswer, 0);
+    console.log(questionsSum);
+    console.log(answersSum);
+    answersSum < questionsSum ? setResult((result) => ({...result, attention: `${answersSum / questionsSum * 100}%`})) : setResult((result) => ({...result, attention: `${questionsSum / answersSum * 100}%`}));
+    console.log(answersSum);
+    console.log('counter == questionQount');
+  }
+}
+
+function handleFinish (counter, questionsCount, isFinished, startTime) {
+  counter == questionsCount? setIsFinished(!isFinished) : setIsFinished(isFinished);
+  counter == questionsCount?  setFinishTime(handleTime(startTime)) : setIsFinished(isFinished);
+}
+
+useEffect(() => {
+  handleAttention(counter, questionsCount);
+}, [answers])
 
 function handleChange (e) {
   setInputData(e.target.value)
@@ -78,7 +108,7 @@ function handleStartButton () {
           <form className='exercise' onSubmit={handleSubmit}>
             <label className='exercise__label'>
               {question}
-              <input className='exercise__input' type="text" name="name" onChange={handleChange} value={inputData}/>
+              <input className='exercise__input' type="number" maxLength="5" name="name" onChange={handleChange} value={inputData}/>
             </label>
             <input className='exercise__input exercise__input_type_submit' type="submit" value="Ответить" />
           </form>
@@ -92,6 +122,12 @@ function handleStartButton () {
             </li>
             <li className='exercise__result-item'>
               Не правильно: {result.notCorrect}
+            </li>
+            <li className='exercise__result-item'>
+              Концентрация: {result.concentrationTime}
+            </li>
+            <li className='exercise__result-item'>
+              Внимательность: {result.attention}
             </li>
           </ul>
         :
